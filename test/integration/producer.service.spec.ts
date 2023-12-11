@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module';
 import { ProducerService } from '../../src/producer/producer.service';
 
-describe('AwardService', () => {
+describe('ProducerService', () => {
   let service: ProducerService;
 
   beforeAll(async () => {

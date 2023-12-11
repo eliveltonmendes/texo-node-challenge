@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProducerService } from './producer.service';
 import { ProducerController } from './producer.controller';
 import { Producer } from '../database/entity/producer.entity';
-import { ProducerRepository } from 'src/database/repositories/producer.repository';
+import { ProducerRepository } from '../database/repositories/producer.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Producer])],
