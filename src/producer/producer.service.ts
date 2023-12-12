@@ -30,29 +30,19 @@ export class ProducerService {
   private assembleProducersDtoWithInterval(
     producers: Producer[],
   ): ProducersIntervalDTO[] {
-    const response: ProducersIntervalDTO[] = producers.map((producer) => {
+    const response: ProducersIntervalDTO[] = [];
+
+    producers.forEach((producer) => {
       const { movieProducers } = producer;
 
-      let interval = 99;
-      let previousWin: number = 0;
-      let followingWin: number = 0;
       for (let i = 1; i < movieProducers.length; i++) {
-        const newInterval =
-          movieProducers[i].movie.year - movieProducers[i - 1].movie.year;
-
-        if (newInterval < interval) {
-          interval = newInterval;
-          previousWin = movieProducers[i - 1].movie.year;
-          followingWin = movieProducers[i].movie.year;
-        }
+        response.push({
+          interval: movieProducers[i].movie.year - movieProducers[i - 1].movie.year,
+          previousWin: movieProducers[i - 1].movie.year,
+          followingWin: movieProducers[i].movie.year,
+          producer: producer
+        })
       }
-
-      return {
-        producer,
-        interval,
-        previousWin,
-        followingWin,
-      };
     });
 
     return response.filter((item) => item.interval != 0 && item.interval != 99);
@@ -61,39 +51,31 @@ export class ProducerService {
   private findMaxWinnerProducer(
     producersDto: ProducersIntervalDTO[],
   ): WinDetailDto[] {
-    const maxInterval = Math.max(
-      ...producersDto.map((prize) => prize.interval),
-    );
+    const interval = Math.max(...producersDto.map((prize) => prize.interval));
 
-    const producers = producersDto.filter(
-      (producer) => producer.interval == maxInterval,
-    );
-
-    return producers.map((producer) => {
-      return {
-        producer: producer.producer.name,
-        interval: maxInterval,
-        previousWin: producer.previousWin,
-        followingWin: producer.followingWin,
-      };
-    });
+    return this.findWinnerByInterval(producersDto, interval);
   }
 
   private findMinWinnerProducer(
     producersDto: ProducersIntervalDTO[],
   ): WinDetailDto[] {
-    const maxInterval = Math.min(
-      ...producersDto.map((prize) => prize.interval),
-    );
+    const interval = Math.min(...producersDto.map((prize) => prize.interval));
 
+    return this.findWinnerByInterval(producersDto, interval);
+  }
+
+  private findWinnerByInterval(
+    producersDto: ProducersIntervalDTO[],
+    interval: number,
+  ): WinDetailDto[] {
     const producers = producersDto.filter(
-      (producer) => producer.interval == maxInterval,
+      (producer) => producer.interval == interval,
     );
 
     return producers.map((producer) => {
       return {
         producer: producer.producer.name,
-        interval: maxInterval,
+        interval: interval,
         previousWin: producer.previousWin,
         followingWin: producer.followingWin,
       };
